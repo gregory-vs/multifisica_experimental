@@ -65,7 +65,7 @@ Os resultados obtidos indicam que o controlador PID foi capaz de estabilizar o s
 
   \begin{figure}[H]
       \centering
-      % \includegraphics[width=0.9\textwidth]{imagens/grafico_posicao_velocidade.png}
+       \includegraphics[width=0.9\textwidth]{imagens/grafico_posicao_velocidade.png}
       \caption{Resposta temporal da posição e da velocidade da peça para uma
       perturbação inicial de $2\%$ em relação a $x_0$.}
       \label{fig:posicao_velocidade_atividade1}
@@ -80,57 +80,43 @@ Além da posição e da velocidade, a corrente elétrica também constitui uma e
   % Inserir aqui o gráfico da corrente
   \begin{figure}[H]
       \centering
-      % \includegraphics[width=0.75\textwidth]{imagens/grafico_corrente.png}
+       \includegraphics[width=0.75\textwidth]{imagens/grafico_corrente.png}
       \caption{Evolução temporal da corrente elétrica durante a estabilização do
       sistema para $\epsilon = 2\%$.}
       \label{fig:corrente_atividade1}
   \end{figure}
 
-A Figura~\ref{fig:corrente_atividade1} permite observar como a corrente varia ao longo do tempo para produzir a força magnética necessária à correção do deslocamento inicial. Esse resultado é importante porque a atividade impõe a restrição de corrente máxima de $2\,\text{A}$. Assim, não basta apenas que a posição retorne a $x_0$; é necessário também que isso ocorra sem violar a limitação física da fonte.
+Os gráficos apresentados nas Figuras~\ref{fig:posicao_velocidade_atividade1} e~\ref{fig:corrente_atividade1} mostram que o controlador PID foi capaz de estabilizar o sistema para uma perturbação inicial de $2\%$. Observa-se que a posição retorna à vizinhança de $x_0$, enquanto a velocidade tende a zero ao longo do tempo, sem indicação de comportamento divergente. Além disso, a corrente permanece dentro do limite máximo de $2\,\text{A}$, mostrando que a estabilização ocorre de forma compatível com a restrição imposta à fonte.
 
-Para complementar a análise, foi realizada uma varredura numérica dos valores de $\epsilon$, com o objetivo de determinar a faixa de perturbações iniciais para as quais o sistema permanece estável e respeita a restrição de corrente.
-A partir dessa análise, obteve-se
+Entretanto, esse resultado ainda corresponde a um caso particular. Para avaliar a faixa de perturbações iniciais para as quais o sistema permanece estável, foi realizada uma varredura numérica dos valores de $\epsilon$, sempre verificando também a restrição de corrente máxima. A partir dessa análise, obteve-se
+\[
+\epsilon_{\max} \approx 0{,}001165\ \text{m},
+\]
+o que corresponde a aproximadamente $13{,}71\%$ da posição de equilíbrio $x_0$.
+
+\section{Resultados da Atividade 2: efeito do ruído na malha de realimentação}
+
+  Na Atividade 2, foi introduzido ruído na medição da posição da peça, com média
+  zero e desvio padrão dado por
   \[
-  \epsilon_{\max} \approx 0{,}001165\ \text{m},
+  sd = 0{,}04x_0.
   \]
-  o que corresponde a aproximadamente $13{,}71\%$ da posição de equilíbrio
-  $x_0$.
 
-Esse resultado mostra que o controlador projetado atende à proposta da atividade, pois estabiliza o sistema para perturbações pequenas e, além disso, apresenta uma margem de estabilidade superior ao caso mínimo exigido no enunciado. Em particular, como a atividade solicita a análise para perturbações inferiores a $3\%$, os resultados obtidos indicam que o sistema permanece estável em uma faixa significativamente mais ampla no caso ideal, isto é, sem a presença de ruído de medição.
+Com isso, o controlador PID passa a atuar sobre sinais medidos com incerteza, o que torna a malha mais sensível e dificulta a estabilização do sistema, principalmente devido ao termo derivativo.
 
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.9\textwidth]{imagens/grafico_ruido.png}
+      \caption{Resposta do sistema com ruído na malha de realimentação.}
+      \label{fig:ruido_atividade2}
+  \end{figure}
 
-\section{Exemplos}
+A Figura~\ref{fig:ruido_atividade2} mostra que a presença de ruído prejudica o desempenho do controlador em comparação com o caso ideal. Além disso, a faixa de valores de $\epsilon$ para a qual o sistema permanece estável é reduzida, e o aumento de $sd$ torna a estabilidade ainda mais difícil de manter.
 
-\subsection{Figura}
+Assim, os resultados indicam que o controlador foi eficaz no caso ideal, mas se mostrou sensível à incerteza na medição.
 
-\begin{figure}[H]
-  \centering
-  \fbox{\rule{0pt}{4cm}\rule{0.7\textwidth}{0pt}}
-  \caption{Espaco reservado para uma figura.}
-\end{figure}
+\section{Conclusão}
 
-\subsection{Tabela}
+Neste trabalho, foi possível modelar o sistema de levitação magnética em espaço de estados e aplicar um controlador PID para estabilizar a posição da peça em torno do ponto de equilíbrio. Na Atividade 1, os resultados mostraram que o controlador foi capaz de estabilizar o sistema para pequenas perturbações iniciais, mantendo também a corrente dentro do limite especificado.
 
-\begin{table}[H]
-  \centering
-  \begin{tabular}{p{4cm}p{3cm}}
-    \toprule
-    Item & Valor \\
-    \midrule
-    Exemplo A & 10 \\
-    Exemplo B & 20 \\
-    \bottomrule
-  \end{tabular}
-  \caption{Tabela de exemplo.}
-\end{table}
-
-\subsection{Codigo}
-
-\begin{minted}{python}
-def saudacao(nome: str) -> str:
-    return f"Ola, {nome}!"
-\end{minted}
-
-\section{Conclusao}
-
-Substitua este texto pelo encerramento do documento.
+Na Atividade 2, observou-se que a presença de ruído na malha de realimentação prejudica o desempenho do controlador e reduz a faixa de estabilidade do sistema. Assim, conclui-se que o PID adotado foi eficaz no caso ideal, mas apresenta sensibilidade à incerteza de medição.
