@@ -1,4 +1,4 @@
-#!/home/grego/repos/multifisica_experimental/.venv/bin/python
+#!/home/gregzera/repos/multifisica_experimental/.venv/bin/python
 import sys
 from jupyter_client.runapp import RunApp
 if __name__ == '__main__':
