@@ -9,76 +9,277 @@ Neste trabalho, é analisado inicialmente um modelo linear do alto-falante nos d
 
 Para a análise do modelo linear, foi utilizado um sinal de áudio com duração de aproximadamente \(9\) segundos e taxa de amostragem de \(44100 \) Hz. O sinal foi normalizado de modo que sua amplitude permanecesse inferior a \(2\,V\), conforme especificado no enunciado.
 
-\section{ Resultados da Atividade 1: resposta temporal e faixa estável de $\epsilon$.}
-
-Na primeira etapa, analisou-se o comportamento do sistema em malha fechada para uma pequena perturbação na posição inicial, conforme proposto no enunciado. Para isso, foi considerada a condição inicial
-  \[
-  x(0) = x_0 + \epsilon,
-  \]
-  com
-  \[
-  \epsilon = 0{,}02x_0,
-  \]
-
-o que corresponde a uma perturbação de $2\%$ em relação à posição de
-equilíbrio.
-
-Os resultados obtidos indicam que o controlador PID foi capaz de estabilizar o sistema para essa condição inicial. A evidência principal disso está na resposta temporal da posição e da velocidade da peça. Observa-se que a posição retorna à vizinhança de $x_0$ ao longo do tempo, enquanto a velocidade tende a zero, caracterizando a convergência do sistema para um estado estável.
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.7\textwidth]{imagens/grafico1.png}
+      \caption{Sinal de entrada \(V_{in}(t)\) no domínio do tempo.}
+      \label{fig:sinal_entrada1}
+  \end{figure}
 
   \begin{figure}[H]
       \centering
-       \includegraphics[width=0.9\textwidth]{imagens/grafico_posicao_velocidade.png}
-      \caption{Resposta temporal da posição e da velocidade da peça para uma
-      perturbação inicial de $2\%$ em relação a $x_0$.}
-      \label{fig:posicao_velocidade_atividade1}
+       \includegraphics[width=0.7\textwidth]{imagens/sinal_entrada1.png}
+      \caption{Espectro de magnitude do sinal de entrada \(V_{in}(j\omega)\) no domínio da frequência.}
+      \label{fig:sinal_entrada2}
   \end{figure}
 
-A Figura~\ref{fig:posicao_velocidade_atividade1} mostra que, após o deslocamento inicial, a peça não se afasta indefinidamente da posição de referência nem apresenta crescimento oscilatório. Pelo contrário, a trajetória permanece limitada e evolui em direção ao ponto de equilíbrio. Esse comportamento confirma que a ação de controle foi suficiente para compensar o efeito da perturbação inicial.
+A Figura 1 apresenta o sinal de entrada \(V_{in}(t)\), com duração de aproximadamente 9 s e taxa de amostragem de 44,1 kHz. O sinal foi normalizado para uma amplitude máxima de 2 V, respeitando as condições estabelecidas para a entrada do sistema. Observa-se uma variação significativa da amplitude ao longo do tempo, característica do sinal de áudio utilizado.
 
-Do ponto de vista físico, isso significa que o controlador ajusta a tensão aplicada à bobina de modo a modificar a corrente elétrica e, consequentemente, a força magnética atuante sobre a peça. Esse mecanismo permite corrigir o desvio de posição e restabelecer o equilíbrio dinâmico do sistema.
+No domínio da frequência, verifica-se que a maior parte da energia do sinal está concentrada nas baixas frequências, com redução progressiva da magnitude para frequências mais elevadas. Esse comportamento é compatível com um sinal de voz, no qual as principais componentes espectrais encontram-se predominantemente nas faixas de baixa e média frequência.
 
-Além da posição e da velocidade, a corrente elétrica também constitui uma evidência importante da atuação do controlador, pois representa diretamente o esforço de controle necessário para estabilizar o sistema. A análise desse sinal permite verificar se a correção exigida da fonte permanece dentro do limite admissível de operação.
+\subsection{Modelo linear do alto-falante}
 
-  % Inserir aqui o gráfico da corrente
+O comportamento dinâmico do alto-falante foi representado por um modelo linear composto por três equações diferenciais, associadas à corrente elétrica na bobina, ao deslocamento do cone e à sua velocidade. O modelo utilizado é dado por:
+
+\begin{equation}
+\begin{cases}
+\dot{i} = -\dfrac{R}{L}i - \dfrac{Bl}{L}v + \dfrac{u}{L} \\[6pt]
+\dot{x} = v \\[6pt]
+\dot{v} = \dfrac{Bl}{m}i - \dfrac{k}{m}x - \dfrac{b}{m}v
+\end{cases}
+\end{equation}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c c}
+\hline
+\textbf{Parâmetro} & \textbf{Valor} \\
+\hline
+$m$  & $14{,}35 \times 10^{-3}\,\text{kg}$ \\
+$b$  & $0{,}786\,\text{kg/s}$ \\
+$k$  & $1852\,\text{N/m}$ \\
+$Bl$ & $4{,}95\,\text{N/A}$ \\
+$L$  & $266 \times 10^{-6}\,\text{H}$ \\
+$R$  & $3{,}3\,\Omega$ \\
+\hline
+\end{tabular}
+\caption{Parâmetros utilizados no modelo linear do alto-falante.}
+\label{tab:parametros_modelo_linear}
+\end{table}
+
+Foram consideradas condições iniciais nulas para todas as variáveis de estado. O sinal de áudio \(V_{in}(t)\), apresentado anteriormente, foi utilizado como entrada \(u(t)\) do sistema.
+
+\subsection{Resposta temporal do modelo linear}
+
+A partir da integração numérica do modelo linear, foram obtidas as respostas temporais da corrente elétrica na bobina, do deslocamento do cone e da aceleração do cone, apresentadas nas Figuras 3, 4 e 5.
+
   \begin{figure}[H]
       \centering
-       \includegraphics[width=0.75\textwidth]{imagens/grafico_corrente.png}
-      \caption{Evolução temporal da corrente elétrica durante a estabilização do
-      sistema para $\epsilon = 2\%$.}
-      \label{fig:corrente_atividade1}
+       \includegraphics[width=0.9\textwidth]{imagens/corrente_eletrica_bobina.png}
+      \caption{Corrente elétrica \(i(t)\) na bobina do alto-falante.}
+      \label{fig:corrente_eletrica1}
   \end{figure}
-
-Os gráficos apresentados nas Figuras~\ref{fig:posicao_velocidade_atividade1} e~\ref{fig:corrente_atividade1} mostram que o controlador PID foi capaz de estabilizar o sistema para uma perturbação inicial de $2\%$. Observa-se que a posição retorna à vizinhança de $x_0$, enquanto a velocidade tende a zero ao longo do tempo, sem indicação de comportamento divergente. Além disso, a corrente permanece dentro do limite máximo de $2\,\text{A}$, mostrando que a estabilização ocorre de forma compatível com a restrição imposta à fonte.
-
-Entretanto, esse resultado ainda corresponde a um caso particular. Para avaliar a faixa de perturbações iniciais para as quais o sistema permanece estável, foi realizada uma varredura numérica dos valores de $\epsilon$, sempre verificando também a restrição de corrente máxima. A partir dessa análise, obteve-se
-\[
-\epsilon_{\max} \approx 0{,}001165\ \text{m},
-\]
-o que corresponde a aproximadamente $13{,}71\%$ da posição de equilíbrio $x_0$.
-
-\section{Resultados da Atividade 2: efeito do ruído na malha de realimentação}
-
-  Na Atividade 2, foi introduzido ruído na medição da posição da peça, com média
-  zero e desvio padrão dado por
-  \[
-  sd = 0{,}04x_0.
-  \]
-
-Com isso, o controlador PID passa a atuar sobre sinais medidos com incerteza, o que torna a malha mais sensível e dificulta a estabilização do sistema, principalmente devido ao termo derivativo.
 
   \begin{figure}[H]
       \centering
-       \includegraphics[width=0.9\textwidth]{imagens/grafico_ruido.png}
-      \caption{Resposta do sistema com ruído na malha de realimentação.}
-      \label{fig:ruido_atividade2}
+       \includegraphics[width=0.9\textwidth]{imagens/deslocamento_cone.png}
+      \caption{Deslocamento \(x(t)\) do cone do alto-falante.}
+      \label{fig:deslocamento_cone}
   \end{figure}
 
-A Figura~\ref{fig:ruido_atividade2} mostra que a presença de ruído prejudica o desempenho do controlador em comparação com o caso ideal. Além disso, a faixa de valores de $\epsilon$ para a qual o sistema permanece estável é reduzida, e o aumento de $sd$ torna a estabilidade ainda mais difícil de manter.
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.9\textwidth]{imagens/aceleracao_cone.png}
+      \caption{Aceleração \(\ddot{x}(t)\) do cone do alto-falante.}
+      \label{fig:aceleracao_cone}
+  \end{figure}
 
-Assim, os resultados indicam que o controlador foi eficaz no caso ideal, mas se mostrou sensível à incerteza na medição.
+Os resultados mostram que a resposta temporal do modelo linear acompanha as variações presentes no sinal de entrada. A corrente elétrica \(i(t)\) apresenta oscilações concentradas nos mesmos intervalos em que o sinal de áudio possui maior amplitude, atingindo seus maiores valores aproximadamente entre 6 e 8 segundos.
+
+O deslocamento \(x(t)\) do cone apresenta amplitudes da ordem de \(10^{-5}\) m e um comportamento mais oscilatório e suavizado em relação à corrente. Isso ocorre devido à dinâmica mecânica do sistema, determinada pela massa, rigidez e amortecimento do conjunto. Observa-se também que o cone oscila em torno da posição de equilíbrio \(x=0\), como esperado para o modelo linear adotado.
+
+A aceleração \(\ddot{x}(t)\) apresenta variações mais rápidas e picos mais acentuados, principalmente nos trechos de maior intensidade do sinal de entrada. Os maiores valores também ocorrem aproximadamente entre 6 e 8 segundos, mostrando que mudanças mais intensas no sinal elétrico resultam em maiores acelerações do cone. De modo geral, os resultados evidenciam a relação entre a excitação elétrica da bobina e a resposta mecânica do alto-falante.
+
+\subsection{Comparação entre a entrada e a aceleração}
+
+Para avaliar a influência da dinâmica do alto-falante sobre o sinal aplicado, foram comparados os conteúdos espectrais do sinal de entrada \(V_{in}\) e da aceleração do cone \(\ddot{x}\).
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.8\textwidth]{imagens/grafico_comparacao.png}
+      \caption{Comparação entre os conteúdos espectrais normalizados do sinal de entrada e da aceleração do cone.}
+      \label{fig:comparacao}
+  \end{figure}
+
+A comparação dos espectros mostra que as principais componentes de frequência presentes no sinal de entrada também aparecem na aceleração do cone. Os picos predominantes ocorrem em regiões semelhantes, indicando que o modelo linear preserva as principais componentes de frequência do sinal. Entretanto, algumas componentes apresentam magnitudes relativas diferentes, evidenciando a influência da dinâmica do alto-falante sobre a resposta do sistema.
+
+\subsection{Geração do sinal de saída}
+
+A partir da aceleração do cone obtida na simulação, foi gerado o arquivo de áudio TC02-out1.wav. Para possibilitar sua reprodução como sinal de áudio, a resposta foi normalizada antes da gravação do arquivo. Dessa forma, tornou-se possível avaliar também de forma auditiva o efeito da dinâmica do modelo linear sobre o sinal de entrada.
+
+De forma geral, os resultados obtidos mostraram que o modelo linear preserva as principais componentes do sinal de entrada, embora a dinâmica eletromecânica do alto-falante altere as amplitudes relativas de determinadas componentes da resposta.
+
+\section{Atividade 02 - Modelo não linear do alto-falante}
+
+\subsection{Definição da não linearidade}
+
+No modelo linear apresentado anteriormente, o fator de força \(Bl\) é considerado constante. Nesta etapa, foi introduzida uma dependência desse parâmetro em relação ao deslocamento \(x\) do cone. Considera-se que \(Bl\) permanece constante próximo à posição de equilíbrio e diminui à medida que o cone se afasta de \(x=0\).
+
+Para \(|x|\leq x_1\), o fator de força mantém o valor utilizado no modelo linear. Para \(|x|\geq x_2\), considera-se \(Bl=0\). No intervalo \(x_1<|x|<x_2\), é utilizado um decaimento polinomial de segunda ordem.
+
+\begin{equation}
+\begin{cases}
+x_1 = 0{,}75\,x_{\max} \\
+x_2 = 1{,}50\,x_{\max}
+\end{cases}
+\end{equation}
+
+onde $x_{\max}$ representa a excursão máxima do cone obtida no modelo linear.
+
+Dessa forma, o fator de força passa a depender apenas da magnitude do deslocamento do cone, resultando em um comportamento simétrico em relação à posição de equilíbrio.
+
+\subsection{Função não linear \(Bl(x)\)}
+
+Para representar a redução do fator de força com o afastamento do cone em relação à posição de equilíbrio, define-se \(r=|x|\). Dessa forma, a função \(Bl(x)\) é descrita por três regiões: uma região constante próxima à posição de equilíbrio, uma região intermediária de decaimento polinomial e uma região externa em que o fator de força é nulo.
+
+\begin{equation}
+Bl(x)=
+\begin{cases}
+Bl_0, & |x| \leq x_1, \\[6pt]
+Bl_0\left[
+1-\left(
+\dfrac{|x|-x_1}{x_2-x_1}
+\right)^2
+\right],
+& x_1 < |x| < x_2, \\[10pt]
+0, & |x| \geq x_2.
+\end{cases}
+\end{equation}
+
+
+Na região intermediária foi adotado um polinômio de segunda ordem que satisfaz \(Bl(x_1)=Bl_0\) e \(Bl(x_2)=0\). Adicionalmente, foi imposta a condição de derivada nula em \(x_1\), garantindo uma transição suave entre a região de fator de força constante e a região de decaimento.
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.8\textwidth]{imagens/grafico_blx.png}
+      \caption{Variação do fator de força \(Bl(x)\) em função do deslocamento do cone.}
+      \label{fig:grafico_blx}
+  \end{figure}
+
+\section{Atividade 03 – Implementação e avaliação do modelo não linear}
+\subsection{Implementação do modelo não linear}
+
+O modelo não linear foi obtido pela substituição do fator de força constante \(Bl\) pela função \(Bl(x)\), definida na Atividade 2.
+
+\begin{equation}
+\begin{cases}
+\dot{i} =
+-\dfrac{R}{L}i
+-\dfrac{Bl(x)}{L}v
++\dfrac{u}{L}
+\\[8pt]
+\dot{x} = v
+\\[8pt]
+\dot{v} =
+\dfrac{Bl(x)}{m}i
+-\dfrac{k}{m}x
+-\dfrac{b}{m}v
+\end{cases}
+\end{equation}
+
+A principal diferença em relação ao modelo linear está, portanto, na substituição de \(Bl\) por \(Bl(x)\), fazendo com que a força eletromecânica varie de acordo com o deslocamento do cone.
+
+\subsection{Resposta temporal do modelo não linear}
+
+Utilizando o mesmo sinal de entrada empregado na análise do modelo linear, o sistema não linear foi integrado numericamente. As respostas temporais da corrente elétrica, do deslocamento do cone e da aceleração são apresentadas nas Figuras 8, 9 e 10.
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.8\textwidth]{imagens/corrente_eletrica_nlinear.png}
+      \caption{Corrente elétrica \(i(t)\) na bobina do alto-falante para o modelo não linear.}
+      \label{fig:corrente_eletrica_nlinear}
+  \end{figure}
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.8\textwidth]{imagens/deslocamento_cone_nlinear.png}
+      \caption{Deslocamento \(x(t)\) do cone para o modelo não linear.}
+      \label{fig:deslocamento_cone_nlinear}
+  \end{figure}
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.8\textwidth]{imagens/aceleracao_cone_nlinear.png}
+      \caption{Aceleração \(\ddot{x}(t)\) do cone para o modelo não linear.}
+      \label{fig:aceleracao_cone_nlinear}
+  \end{figure}
+
+Os resultados mostram que a resposta temporal do modelo não linear mantém o mesmo comportamento geral observado no modelo linear, com maiores amplitudes nos intervalos em que o sinal de entrada apresenta maior intensidade. A corrente elétrica apresenta picos mais pronunciados aproximadamente entre 6 e 8 s, enquanto o deslocamento do cone permanece da ordem de \(10^{-5}\,\text{m}\).
+
+Nos trechos de maior deslocamento, o fator de força \(Bl(x)\) diminui à medida que o cone se afasta da posição de equilíbrio, reduzindo o acoplamento eletromecânico. Como consequência, a resposta passa a depender da própria amplitude do movimento do cone. A aceleração apresenta picos mais acentuados nos mesmos intervalos de maior excitação, evidenciando a influência da não linearidade sobre a dinâmica do sistema.
+
+\subsection{Análise espectral do modelo não linear}
+
+Para avaliar o efeito da não linearidade sobre o conteúdo em frequência da resposta do sistema, foram comparados os espectros normalizados do sinal de entrada e da aceleração do cone obtida pelo modelo não linear.
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.8\textwidth]{imagens/comparativo_nlinear.png}
+      \caption{Comparação entre os conteúdos espectrais normalizados do sinal de entrada e da aceleração do cone para o modelo não linear.}
+      \label{fig:comparativo_nlinear}
+  \end{figure}
+
+A comparação dos espectros mostra que as principais componentes de frequência presentes no sinal de entrada também estão presentes na aceleração do cone no modelo não linear. Os picos predominantes permanecem em regiões semelhantes, indicando que o sistema preserva as componentes principais do sinal aplicado. Entretanto, observam-se pequenas alterações nas magnitudes relativas de algumas componentes, decorrentes da dependência do fator de força \(Bl(x)\) em relação ao deslocamento do cone. Essas diferenças evidenciam a influência da não linearidade sobre a resposta espectral do sistema.
+
+\subsection{Geração do arquivo de saída}
+
+A aceleração obtida pelo modelo não linear foi normalizada e utilizada para gerar o arquivo de áudio TC02-out2.wav. Essa etapa permite avaliar também de forma auditiva o efeito da não linearidade introduzida no fator de força \(Bl(x)\) sobre a resposta do sistema.
+
+\section{Atividade 04 – Resposta a um sinal senoidal}
+\subsection{Definição do sinal de entrada}
+
+Para comparar diretamente os modelos linear e não linear, foi utilizado um sinal de entrada senoidal com amplitude de \(2\,\text{V}\) e frequência pertencente à faixa da voz humana. A duração do sinal foi escolhida de forma a conter pelo menos 20 períodos, conforme especificado no enunciado.
+
+\begin{equation}
+u(t) = 2\sin(2\pi f_0 t)
+\end{equation}
+
+Para a simulação, foi adotada a frequência \(f_0 = 200\,\text{Hz}\). O período correspondente é \(T=1/f_0=5\,\text{ms}\). Foi considerada uma duração total de \(0{,}2\,\text{s}\), equivalente a 40 períodos do sinal, atendendo ao requisito mínimo de 20 períodos.
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.8\textwidth]{imagens/sinal_senoidal.png}
+      \caption{Sinal senoidal de entrada utilizado na comparação dos modelos linear e não linear.}
+      \label{fig:sinal_senoidal}
+  \end{figure}
+
+\subsection{Comparação das respostas linear e não linear}
+
+O sinal senoidal definido anteriormente foi aplicado aos modelos linear e não linear, mantendo-se os mesmos parâmetros do sistema e condições iniciais nulas. As respostas obtidas foram comparadas com o objetivo de avaliar os efeitos da não linearidade do fator de força \(Bl(x)\), tanto durante o regime transitório quanto no regime permanente.
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.7\textwidth]{imagens/comparacao_senoide.png}
+      \caption{Comparação da aceleração do cone para os modelos linear e não linear submetidos à entrada senoidal.}
+      \label{fig:comparacao_senoide}
+  \end{figure}
+
+\subsection{Análise dos regimes transitório e permanente}
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.7\textwidth]{imagens/regime_transitorio.png}
+      \caption{Comparação das respostas dos modelos linear e não linear durante o regime transitório.}
+      \label{fig:regime_transitorio}
+  \end{figure}
+
+  \begin{figure}[H]
+      \centering
+       \includegraphics[width=0.7\textwidth]{imagens/regime_permanente.png}
+      \caption{Comparação das respostas dos modelos linear e não linear durante o regime permanente.}
+      \label{fig:regime_permanente}
+  \end{figure}
+
+No regime transitório, observa-se que os modelos apresentam respostas distintas desde os primeiros ciclos. O modelo linear atinge rapidamente amplitudes elevadas de aceleração, enquanto o modelo não linear apresenta uma resposta limitada pela redução do fator de força \(Bl(x)\) à medida que o deslocamento do cone aumenta.
+
+No regime permanente, a diferença entre os modelos permanece evidente. O modelo linear apresenta uma resposta aproximadamente senoidal com maior amplitude, enquanto o modelo não linear possui amplitude significativamente menor e forma de onda mais distorcida. Esse comportamento decorre da dependência de \(Bl(x)\) em relação ao deslocamento, que reduz o acoplamento eletromecânico nos trechos de maior excursão do cone.
+
+Dessa forma, a não linearidade introduzida modifica tanto a amplitude quanto a forma da resposta do sistema, sendo seus efeitos observados nos regimes transitório e permanente.
 
 \section{Conclusão}
 
-Neste trabalho, foi possível modelar o sistema de levitação magnética em espaço de estados e aplicar um controlador PID para estabilizar a posição da peça em torno do ponto de equilíbrio. Na Atividade 1, os resultados mostraram que o controlador foi capaz de estabilizar o sistema para pequenas perturbações iniciais, mantendo também a corrente dentro do limite especificado.
+O presente trabalho permitiu analisar o comportamento dinâmico de um alto-falante por meio de modelos linear e não linear, considerando o acoplamento entre as grandezas elétricas e mecânicas do sistema. No modelo linear, observou-se que as principais características temporais e espectrais do sinal de entrada são preservadas, embora a dinâmica do sistema altere a amplitude relativa de determinadas componentes.
 
-Na Atividade 2, observou-se que a presença de ruído na malha de realimentação prejudica o desempenho do controlador e reduz a faixa de estabilidade do sistema. Assim, conclui-se que o PID adotado foi eficaz no caso ideal, mas apresenta sensibilidade à incerteza de medição.
+A introdução da não linearidade no fator de força \(Bl(x)\) tornou a resposta dependente do deslocamento do cone, reduzindo o acoplamento eletromecânico para maiores excursões. Essa influência ficou mais evidente na análise com entrada senoidal, na qual o modelo não linear apresentou menor amplitude e maior distorção da resposta quando comparado ao modelo linear, tanto no regime transitório quanto no permanente.
+
+De forma geral, os resultados evidenciam a importância da consideração de efeitos não lineares na modelagem do alto-falante, especialmente em condições de maior deslocamento do cone, nas quais a aproximação linear passa a representar de forma menos adequada o comportamento do sistema.
