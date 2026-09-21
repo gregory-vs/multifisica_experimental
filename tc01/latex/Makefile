@@ -1,15 +1,15 @@
-MAIN=main.tex
+PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+MAIN ?= main.tex
 
 .PHONY: all pdf watch clean
 
 all: pdf
 
 pdf:
-	latexmk -pdf -shell-escape -interaction=nonstopmode -synctex=1 -outdir=build $(MAIN)
+	cd "$(PROJECT_DIR)" && latexmk "$(MAIN)"
 
 watch:
-	latexmk -pdf -shell-escape -interaction=nonstopmode -synctex=1 -pvc -outdir=build $(MAIN)
+	cd "$(PROJECT_DIR)" && latexmk -pvc "$(MAIN)"
 
 clean:
-	latexmk -c
-	rm -rf build
+	cd "$(PROJECT_DIR)" && latexmk -c "$(MAIN)"

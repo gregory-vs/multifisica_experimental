@@ -1,183 +1,345 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import quad
-import math 
 
-# u(x) = x^2*e^x+cos(3x)
 
-# --- input data --- 
-# boundary conditions
-q = 1.728289
-h = 0
+# ============================================================
+# Parâmetros do problema
+# ============================================================
 
-# source f(x)
-def f(x): 
-    #f = 5.0 # Problema original da atividade avaliativa 03
-    f = (x**2 + 4*x + 2)*math.e**x - 9*math.cos(3*x) # Um problema um pouco mais interessante 
-    # teste aqui qualquer função f
-    return f
-# A solução analítica depende da integral da função f(x) no intervalo 0-y. 
-# Essa integral poderia ser feita usando o pacote de integração simbólica do python.
-# Entretanto, nesse exemplo ela é feita analiticamente por meio da função int_f
-def int_f(z): # to avoid symbolic integation of f over z 
-    #f = 5.0*z
-    f = (z**2 + 2*z)*math.e**z - 3*math.sin(3*z)
-    # para qualquer nova função f, é necessário criar a int_0^y f(z)dz
-    return f
+Omega = [0.0, 1.0]
 
-# degrees of freedom
-dof = 7
-samples = 201 # used to plot the figures
+# Número de pontos internos.
+# Mesma convenção utilizada no fdm.py.
+n = 6
 
-# --- Solution ---
-# sample points
-x = np.linspace(0, 1, samples)
-u = np.zeros(np.size(x))
+# Número total de nós e de elementos
+n_nodes = n + 2
+n_elements = n_nodes - 1
 
-j = 0
-for i in x:
-    u[j] = q + (1-i)*h + quad(int_f,i,1)[0] # ,args=(f,i))[0]
-    j = j+1
-    
-fig = plt.figure(figsize=(8,5))
-plt.plot(x, u, 'k', linewidth=2);
-plt.grid(True);
-plt.xlabel('$x$');
-plt.ylabel('$u$');
-fig.suptitle('Fig. 1 - Exact solutions using quadratic integration');
+# Coordenadas dos nós
+x_nodes = np.linspace(Omega[0], Omega[1], n_nodes)
 
-# 1D mesh
-xi = np.linspace(0, 1, dof+1) # do not necessarily have to a linear spaced vector
-np.set_printoptions(precision=3)
-print("\n")
-print("Nós usados na discretização:")
-print(xi)
-print("\n")
+# Espaçamento uniforme
+h = (Omega[1] - Omega[0]) / n_elements
 
-# first order shape function
-def N(xp,xi,i):
-    last_i = len(xi)-1 
-    if(i == 0 and xp <= xi[1]):
-        y = (xi[1]-xp)/(xi[1]-xi[0])
-    elif(i == last_i and xp >= xi[last_i-1]):
-        y = (xp-xi[last_i-1])/(xi[last_i]-xi[last_i-1])
-    elif(xp >= xi[i] and xp <= xi[i+1]):
-        y = (xi[i+1]-xp)/(xi[i+1]-xi[i])
-    elif(xp <= xi[i] and xp >= xi[i-1]):
-        y = (xp-xi[i-1])/(xi[i]-xi[i-1])
-    else:
-        y = 0
-    return y
+print(f"h = {h}")
+print(f"Número de pontos internos = {n}")
+print(f"Número total de nós = {n_nodes}")
+print(f"Número de elementos = {n_elements}")
 
-# ploting shape functions
-fig = plt.figure(figsize=(8,5))
-for j in range(len(xi)):
-    Ni = np.zeros(np.size(x))
-    for i in range(len(x)):
-        Ni[i] = N(x[i],xi,j)
+print("\nNós usados na discretização:")
+print(x_nodes)
 
-    plt.plot(x, Ni, linewidth=2);
-plt.grid(True);
-plt.xlabel('$x$');
-plt.ylabel('$Ni$');
-fig.suptitle('Fig. 2 - First order shape functions');
-plt.show()
 
-# derivatives of the first order shape function
-def dNdx(xp,xi,i):
-    last_i = len(xi)-1 
-    if(i == 0 and xp <= xi[1]):
-        y = (-1)/(xi[1]-xi[0])
-    elif(i == last_i and xp >= xi[last_i-1]):
-        y = (1)/(xi[last_i]-xi[last_i-1])
-    elif(xp >= xi[i] and xp <= xi[i+1]):
-        y = (-1)/(xi[i+1]-xi[i])
-    elif(xp <= xi[i] and xp >= xi[i-1]):
-        y = (1)/(xi[i]-xi[i-1])
-    else:
-        y = 0
-    return y
+# ============================================================
+# Solução manufaturada e função fonte
+# ============================================================
 
-# ploting shape functions
-fig = plt.figure(figsize=(8,5))
-for j in range(len(xi)):
-    dNidx = np.zeros(np.size(x))
-    for i in range(len(x)):
-        dNidx[i] = dNdx(x[i],xi,j)
+def ue(x):
+    """
+    Solução analítica manufaturada:
+    u_e(x) = x² e^x + cos(3x)
+    """
+    return (x**2) * np.exp(x) + np.cos(3 * x)
 
-    plt.plot(x, dNidx, linewidth=2);
-plt.grid(True);
-plt.xlabel('$x$');
-plt.ylabel('$Ni$');
-fig.suptitle('Fig. 3 - Derivatives of the first order shape functions');
-plt.show()
 
-# Initializing the variables
-K_AB = np.zeros([dof,dof])
-F_A = np.zeros(dof)
+def f(x):
+    """
+    Função fonte:
+    f(x) = u_e''(x)
+    """
+    return (
+        (x**2 + 4*x + 2) * np.exp(x)
+        - 9 * np.cos(3 * x)
+    )
 
-# Bilinear operetor a(w,v)
-def innerprod_a(xp,xi,a,b):  
-    y = dNdx(xp,xi,a)*dNdx(xp,xi,b)
-    return y
 
-# Bilinear operetor (w,f)
-def innerprod(xp,xi,a):  
-    y = N(xp,xi,a)*f(xp)
-    return y
+# ============================================================
+# Condições de contorno
+# ============================================================
 
-# loop over the N_A functions
-for a in range(dof):
-    # loop over the N_B functions
-    for b in range(dof): # cold be considerably optimized due to the kronecker delta properties
-        K_AB[a,b] = quad(innerprod_a,0,1,args=(xi,a,b))[0]
-    
-    F_A[a] = quad(innerprod,0,1,args=(xi,a))[0] + N(0,xi,a)*h - q*quad(innerprod_a,0,1,args=(xi,a,dof))[0]
+u0 = ue(Omega[0])
+u1 = ue(Omega[1])
 
-print("\n")        
-print("K_AB =")
-print(K_AB)
-print("\n")
-print("F_A =")
-print(F_A)
+print("\nCondições de contorno:")
+print(f"u(0) = {u0}")
+print(f"u(1) = {u1}")
 
-# solving the linea system
-d = np.linalg.solve(K_AB, F_A)
-print("\n System solution d = ")
-print(d)
 
-# Adding d_(n+1)
-d = np.append(d,q)
-print("\n Adding d_(n+1) = q")
-print(d)
+# ============================================================
+# Funções de forma locais
+# ============================================================
 
-#ploting solution.
-u_fem = np.zeros(np.size(x))
-for i in range(len(x)): # loop over all sample points
-    for j in range(len(xi)): # loop over all shape functios
-    
-        u_fem[i] = u_fem[i] + N(x[i],xi,j)*d[j]
+def N1(x, xa, xb):
+    """
+    Função de forma associada ao nó esquerdo do elemento.
+    """
+    return (xb - x) / (xb - xa)
 
-# calculo do RMSE
-RMSE = np.sqrt(np.mean((u_fem - u)**2))
 
-print("\n")
-print("Erro quadrático médio (RMSE) - FEM:")
-print(RMSE)
-        
-fig = plt.figure(figsize=(8,5))
-plt.plot(x, u_fem, 'r', linewidth=2);
-plt.plot(x, u, 'k', linewidth=2);
-plt.grid(True);
-plt.xlabel('$x$');
-plt.ylabel('$u$');
-fig.suptitle('Fig. 3 - FEM solution');
+def N2(x, xa, xb):
+    """
+    Função de forma associada ao nó direito do elemento.
+    """
+    return (x - xa) / (xb - xa)
 
-plt.text(
-    0.05, 0.90,
-    f'RMSE = {RMSE:.6e}',
-    transform=plt.gca().transAxes,
-    bbox=dict(boxstyle='round', facecolor='white', edgecolor='black')
+
+# ============================================================
+# Inicialização da matriz global e vetor global
+# ============================================================
+
+K = np.zeros((n_nodes, n_nodes))
+F = np.zeros(n_nodes)
+
+
+# ============================================================
+# Montagem elemento por elemento
+# ============================================================
+
+for e in range(n_elements):
+
+    xa = x_nodes[e]
+    xb = x_nodes[e + 1]
+
+    he = xb - xa
+
+    # --------------------------------------------------------
+    # Matriz de rigidez local
+    #
+    # K_e = integral (dN/dx)^T (dN/dx) dx
+    # --------------------------------------------------------
+
+    Ke = (1.0 / he) * np.array([
+        [1.0, -1.0],
+        [-1.0, 1.0]
+    ])
+
+    # --------------------------------------------------------
+    # Vetor de forças local
+    #
+    # Como:
+    #
+    #     u'' = f
+    #
+    # a forma fraca é:
+    #
+    #     integral w' u' dx = - integral w f dx
+    #
+    # Portanto o vetor possui sinal negativo.
+    # --------------------------------------------------------
+
+    Fe = np.zeros(2)
+
+    Fe[0] = -quad(
+        lambda x: N1(x, xa, xb) * f(x),
+        xa,
+        xb
+    )[0]
+
+    Fe[1] = -quad(
+        lambda x: N2(x, xa, xb) * f(x),
+        xa,
+        xb
+    )[0]
+
+    # Nós globais correspondentes ao elemento
+    nodes = [e, e + 1]
+
+    # --------------------------------------------------------
+    # Montagem global
+    # --------------------------------------------------------
+
+    for a in range(2):
+
+        A = nodes[a]
+
+        F[A] += Fe[a]
+
+        for b in range(2):
+
+            B = nodes[b]
+
+            K[A, B] += Ke[a, b]
+
+
+print("\nMatriz global K antes das condições de contorno:")
+print(K)
+
+print("\nVetor global F antes das condições de contorno:")
+print(F)
+
+
+# ============================================================
+# Aplicação das condições de contorno de Dirichlet
+# ============================================================
+
+# Antes de alterar a matriz, transferimos as contribuições
+# dos valores prescritos para o vetor do lado direito.
+
+F = F - K[:, 0] * u0
+F = F - K[:, -1] * u1
+
+
+# Primeira condição: u(0) = u0
+K[0, :] = 0.0
+K[:, 0] = 0.0
+K[0, 0] = 1.0
+
+F[0] = u0
+
+
+# Segunda condição: u(1) = u1
+K[-1, :] = 0.0
+K[:, -1] = 0.0
+K[-1, -1] = 1.0
+
+F[-1] = u1
+
+
+print("\nMatriz global K após as condições de contorno:")
+print(K)
+
+print("\nVetor global F após as condições de contorno:")
+print(F)
+
+
+# ============================================================
+# Solução do sistema linear
+# ============================================================
+
+u_fem_nodes = np.linalg.solve(K, F)
+
+print("\nSolução FEM nos nós:")
+print(u_fem_nodes)
+
+print("\nSolução exata nos nós:")
+print(ue(x_nodes))
+
+
+# ============================================================
+# Cálculo do RMSE
+# ============================================================
+
+# Para manter a comparação coerente com o FDM,
+# o RMSE é calculado nos mesmos 6 pontos internos.
+
+u_fem_internal = u_fem_nodes[1:-1]
+x_internal = x_nodes[1:-1]
+
+RMSE = np.sqrt(
+    np.mean(
+        (u_fem_internal - ue(x_internal))**2
+    )
 )
 
-plt.show()
+print("\nErro quadrático médio (RMSE) - FEM:")
+print(RMSE)
+
+
+# ============================================================
+# Interpolação da solução FEM
+# ============================================================
+
+x_plot = np.linspace(Omega[0], Omega[1], 300)
+u_fem_plot = np.zeros_like(x_plot)
+
+for i, xp in enumerate(x_plot):
+
+    # Tratamento do último ponto do domínio
+    if np.isclose(xp, Omega[1]):
+        u_fem_plot[i] = u_fem_nodes[-1]
+        continue
+
+    # Identifica o elemento que contém xp
+    e = np.searchsorted(x_nodes, xp, side="right") - 1
+
+    e = max(0, min(e, n_elements - 1))
+
+    xa = x_nodes[e]
+    xb = x_nodes[e + 1]
+
+    u_fem_plot[i] = (
+        N1(xp, xa, xb) * u_fem_nodes[e]
+        +
+        N2(xp, xa, xb) * u_fem_nodes[e + 1]
+    )
+
+
+# ============================================================
+# Gráfico da solução FEM
+# ============================================================
+
+plt.figure(figsize=(8, 4))
+
+plt.plot(
+    x_plot,
+    ue(x_plot),
+    label="Solução analítica"
+)
+
+plt.plot(
+    x_plot,
+    u_fem_plot,
+    label="FEM"
+)
+
+plt.scatter(
+    x_nodes,
+    u_fem_nodes,
+    label="Nós FEM"
+)
+
+plt.title(
+    f"Solução pelo Método dos Elementos Finitos - n = {n}"
+)
+
+plt.xlabel("x")
+plt.ylabel("u(x)")
+
+plt.grid(True)
+plt.legend()
+
+plt.text(
+    0.05,
+    0.90,
+    f"RMSE = {RMSE:.6e}",
+    transform=plt.gca().transAxes,
+    bbox=dict(
+        boxstyle="round",
+        facecolor="white",
+        edgecolor="black"
+    )
+)
+
+plt.savefig(
+    "solucao_fem.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.close()
+
+
+# ============================================================
+# Visualização da matriz de rigidez
+# ============================================================
+
+plt.figure(figsize=(5, 5))
+
+plt.spy(K)
+
+plt.title("Estrutura da matriz do FEM")
+
+plt.savefig(
+    "matriz_fem.png",
+    dpi=300,
+    bbox_inches="tight"
+)
+
+plt.close()
+
+
+print("\nFiguras geradas:")
+print("- solucao_fem.png")
+print("- matriz_fem.png")

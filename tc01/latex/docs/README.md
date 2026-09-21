@@ -35,15 +35,33 @@ template-latex/
 ## Compilacao
 
 ```bash
-make
+make -C tc01/latex
 ```
 
-O PDF sera gerado em `build/main.pdf`.
+Execute esse comando na raiz do repositorio. Dentro de `tc01/latex`, basta
+executar `make`. Tambem e possivel usar `make -f tc01/latex/Makefile` na raiz.
+O Makefile sempre compila a partir da pasta do relatorio.
+
+O PDF sera gerado em `tc01/latex/build/main.pdf` (o `main.pdf` fora de `build`
+nao e atualizado).
+
+Para compilar diretamente da raiz, use:
+
+```bash
+latexmk -cd -pdf -shell-escape -outdir=build tc01/latex/main.tex
+```
+
+A opcao `-cd` evita o erro `File gerais/pacotes.tex not found` ao compilar
+fora da pasta do documento. No VS Code, use a receita `latexmk (shell-escape)`
+do LaTeX Workshop. Os arquivos incluidos indicam `main.tex` como documento raiz.
+
+Dependencias: `make`, `latexmk`, uma instalacao TeX Live com os pacotes usados
+no preambulo e `pygmentize` (Pygments, exigido pelo pacote `minted` instalado).
 
 ## Compilacao continua
 
 ```bash
-make watch
+make -C tc01/latex watch
 ```
 
 Esses comandos usam `latexmk` com `-shell-escape`, igual ao projeto base.
@@ -51,5 +69,7 @@ Esses comandos usam `latexmk` com `-shell-escape`, igual ao projeto base.
 ## Limpeza
 
 ```bash
-make clean
+make -C tc01/latex clean
 ```
+
+A limpeza remove auxiliares e preserva o PDF gerado.
