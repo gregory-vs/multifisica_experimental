@@ -1,0 +1,402 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{
+    top=2.5cm,
+    bottom=2.5cm,
+    left=2.5cm,
+    right=2.5cm
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{pythonstyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4
+}
+
+\lstset{style=pythonstyle}
+
+\title{
+    \textbf{Trabalho Computacional 04: Simulação de Problemas Eletrostáticos}
+    \\[0.3cm]
+    \large Modelagem Multifísica de um Eletropropulsor Axissimétrico e Dinâmica de Gotículas
+}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introdução}
+
+O presente trabalho aborda a modelagem e simulação computacional de um propulsor
+eletrostático espacial baseado no regime de eletrospray coloidal. O problema é
+estruturado em duas etapas complementares:
+
+\begin{enumerate}
+    \item \textbf{Parte 1 (Problema Eletrostático Estático):}
+    Determinação do campo elétrico crítico de Taylor, cálculo analítico da tensão
+    de transição, dedução da formulação fraca axissimétrica para o Método dos
+    Elementos Finitos (FEM) e análise teórica do papel do sistema de neutralização
+    de carga.
+
+    \item \textbf{Parte 2 (Problema Dinâmico da Gotícula):}
+    Modelagem do desacoplamento eletro-hidrodinâmico, determinação das propriedades
+    da gotícula (massa e carga), formulação da dinâmica em espaço de estados e
+    integração temporal via método de Runge-Kutta para obtenção da velocidade de
+    exaustão e do perfil de força ao longo do eixo de simetria.
+\end{enumerate}
+
+\section{Parte 1: O Problema Eletrostático Estático}
+
+\subsection{Parâmetros Físicos e Valores Analíticos de Referência}
+
+Considerando os dados fornecidos pelo problema:
+
+\begin{itemize}
+    \item Raio do tubo capilar:
+    \[
+    R = \frac{0{,}12\,\text{mm}}{2}
+    = 0{,}06\,\text{mm}
+    = 6 \times 10^{-5}\,\text{m}.
+    \]
+
+    \item Raio de curvatura inicial do menisco:
+    \[
+    R_c = R = 6 \times 10^{-5}\,\text{m}.
+    \]
+
+    \item Distância intereletrodo:
+    \[
+    d = 6\,\text{mm} = 6 \times 10^{-3}\,\text{m}.
+    \]
+
+    \item Dimensões do anel extrator:
+    \[
+    R_a = 2\,\text{mm}
+    \]
+    (raio interno) e
+    \[
+    R_b = 9\,\text{mm}
+    \]
+    (raio externo).
+
+    \item Propriedades da formamida:
+    tensão superficial
+    \[
+    \gamma = 0{,}05\,\text{N/m},
+    \]
+    densidade
+    \[
+    \rho = 1130\,\text{kg/m}^3.
+    \]
+
+    \item Permissividade elétrica do meio (vácuo/ar):
+    \[
+    \varepsilon_0 \approx 8{,}854187 \times 10^{-12}\,\text{F/m}.
+    \]
+\end{itemize}
+
+O campo elétrico crítico para o surgimento da instabilidade na superfície líquida
+(formação do Cone de Taylor) é dado por:
+
+\begin{equation}
+E_{\mathrm{crit}}
+=
+\sqrt{
+\frac{\pi\gamma}
+{2\varepsilon_0 R}
+}.
+\end{equation}
+
+Substituindo os valores:
+
+\begin{equation}
+E_{\mathrm{crit}}
+=
+\sqrt{
+\frac{\pi \times 0{,}05}
+{2 \times (8{,}854187 \times 10^{-12})
+\times (6 \times 10^{-5})}
+}
+\approx
+3{,}845 \times 10^8\,\text{V/m}
+\quad
+(384{,}5\,\text{MV/m}).
+\end{equation}
+
+Aproximando a configuração eletrostática pelo modelo de eletrodo plano infinito
+condutor à distância $d$, a diferença de potencial elétrico necessária para
+induzir tal campo na ponta é estimada por:
+
+\begin{equation}
+V_{\mathrm{analit}}
+=
+\sqrt{
+\frac{\gamma R_c}{\varepsilon_0}
+}
+\ln\left(
+\frac{4d}{R_c}
+\right).
+\end{equation}
+
+Calculando os termos intervenientes:
+
+\begin{align}
+\sqrt{
+\frac{\gamma R_c}{\varepsilon_0}
+}
+&=
+\sqrt{
+\frac{0{,}05 \times 6 \times 10^{-5}}
+{8{,}854187 \times 10^{-12}}
+}
+\approx
+582{,}09\,\text{V},
+\\[0.3cm]
+\ln\left(
+\frac{4d}{R_c}
+\right)
+&=
+\ln\left(
+\frac{4 \times 6 \times 10^{-3}}
+{6 \times 10^{-5}}
+\right)
+=
+\ln(400)
+\approx
+5{,}9915.
+\end{align}
+
+Resultando na tensão de limiar:
+
+\begin{equation}
+V_{\mathrm{analit}}
+\approx
+582{,}09 \times 5{,}9915
+\approx
+\mathbf{3487{,}6\,\text{V}}
+\quad
+(\approx 3{,}49\,\text{kV}).
+\end{equation}
+
+\subsection{Dedução da Forma Fraca Axissimétrica (FEM)}
+
+Em coordenadas cilíndricas $(x,r,\theta)$ com simetria azimutal
+($\partial/\partial\theta = 0$), a equação de Laplace no domínio meridional
+$\Omega$ é expressa por:
+
+\begin{equation}
+\nabla \cdot (\varepsilon \nabla \phi)
+=
+\frac{\partial}{\partial x}
+\left(
+\varepsilon \frac{\partial\phi}{\partial x}
+\right)
++
+\frac{1}{r}
+\frac{\partial}{\partial r}
+\left(
+r\varepsilon
+\frac{\partial\phi}{\partial r}
+\right)
+=
+0.
+\end{equation}
+
+Multiplicando por uma função de teste
+$w \in \mathcal{V}$, com
+
+\begin{equation}
+\mathcal{V}
+=
+\left\{
+w \in H^1(\Omega)
+\mid
+w|_{\Gamma_D}=0
+\right\},
+\end{equation}
+
+e integrando no volume de revolução
+\[
+dV = 2\pi r\,dr\,dx,
+\]
+obtém-se:
+
+\begin{equation}
+2\pi
+\iint_{\Omega}
+w
+\left[
+\frac{\partial}{\partial x}
+\left(
+\varepsilon
+\frac{\partial\phi}{\partial x}
+\right)
++
+\frac{1}{r}
+\frac{\partial}{\partial r}
+\left(
+r\varepsilon
+\frac{\partial\phi}{\partial r}
+\right)
+\right]
+r\,dr\,dx
+=
+0.
+\end{equation}
+
+Integrando por partes no domínio bidimensional $\Omega$:
+
+\begin{equation}
+2\pi
+\oint_{\partial\Omega}
+w\varepsilon
+\left(
+\nabla\phi\cdot\mathbf{n}
+\right)
+r\,ds
+-
+2\pi
+\iint_{\Omega}
+\varepsilon
+\left(
+\frac{\partial w}{\partial x}
+\frac{\partial\phi}{\partial x}
++
+\frac{\partial w}{\partial r}
+\frac{\partial\phi}{\partial r}
+\right)
+r\,dr\,dx
+=
+0.
+\end{equation}
+
+As condições de contorno do sistema são:
+
+\begin{enumerate}
+    \item \textbf{Fronteiras de Dirichlet Essenciais:}
+    \begin{itemize}
+        \item No capilar condutor
+        ($x=0$, $0\leq r\leq R$):
+        \[
+        \phi=V_0
+        \implies
+        w=0.
+        \]
+
+        \item No eletrodo anular aterrado
+        ($x=d$, $R_a\leq r\leq R_b$):
+        \[
+        \phi=0\,\text{V}
+        \implies
+        w=0.
+        \]
+    \end{itemize}
+
+    \item \textbf{Eixo de Simetria ($r=0$):}
+    A condição natural impõe
+    \[
+    \left.
+    \frac{\partial\phi}{\partial r}
+    \right|_{r=0}
+    =
+    0.
+    \]
+    O fator $r$ ponderador anula naturalmente o fluxo.
+
+    \item \textbf{Fronteiras Distantes:}
+    Condição de truncamento
+    \[
+    \phi=0\,\text{V}
+    \]
+    ou Neumann homogêneo
+    \[
+    \nabla\phi\cdot\mathbf{n}=0.
+    \]
+\end{enumerate}
+
+Eliminando a constante $2\pi$ e aplicando $w=0$ em $\Gamma_D$, obtém-se a forma
+variacional padrão para implementação:
+
+\begin{equation}
+\iint_{\Omega}
+\varepsilon
+\left(
+\frac{\partial w}{\partial x}
+\frac{\partial\phi}{\partial x}
++
+\frac{\partial w}{\partial r}
+\frac{\partial\phi}{\partial r}
+\right)
+r\,dr\,dx
+=
+0,
+\qquad
+\forall w\in\mathcal{V}.
+\end{equation}
+
+\subsection{Comparação entre a Simulação e a Expressão Analítica}
+
+A formulação analítica clássica adota uma aproximação idealizada de eletrodo
+plano maciço infinito. Em contrapartida, o propulsor físico conta com uma abertura
+circular de raio $R_a=2\,\text{mm}$ no centro do eletrodo para a passagem do spray.
+
+Essa abertura promove uma alteração do campo elétrico próximo ao eixo axial em
+comparação ao caso de uma placa fechada. Em consequência, a tensão numérica
+obtida via FEM para alcançar o campo de instabilidade de
+$384{,}5\,\text{MV/m}$ pode diferir do valor de $3487{,}6\,\text{V}$ previsto
+pelo modelo analítico idealizado.
+
+\subsection{Mecanismo do Sistema Neutralizador}
+
+Devido à polarização do propulsor
+($\phi(0)=V_0$ e eletrodo a $0\,\text{V}$), as linhas de campo elétrico apontam
+em direção ao anel de extração.
+
+Partículas carregadas positivamente sofrem forças laterais de atração, o que
+pode levar à colisão das gotas contra a placa condutora, reduzindo a eficiência
+da transferência de quantidade de movimento para o satélite.
+
+Além disso, a exaustão contínua de cargas positivas provocaria o carregamento
+elétrico negativo da carcaça do veículo espacial, gerando um potencial adverso
+que poderia frear e recolher o feixe de gotículas.
+
+Para contornar tal problema, adota-se um \textbf{cátodo neutralizador}, como
+filamentos termoiônicos ou emissores de cátodo oco, posicionado após o orifício
+de exaustão. Ele injeta elétrons em quantidade aproximadamente equivalente à
+corrente do jato coloidal, reduzindo o carregamento líquido da pluma e permitindo
+a operação contínua do sistema de propulsão.
+
+
+
+\end{document}
