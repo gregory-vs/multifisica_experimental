@@ -149,9 +149,9 @@ E_{\mathrm{crit}}
 \times (6 \times 10^{-5})}
 }
 \approx
-3{,}845 \times 10^8\,\text{V/m}
+1{,}216 \times 10^7\,\text{V/m}
 \quad
-(384{,}5\,\text{MV/m}).
+(12{,}16\,\text{MV/m}).
 \end{equation}
 
 Aproximando a configuração eletrostática pelo modelo de eletrodo plano infinito
@@ -374,7 +374,7 @@ circular de raio $R_a=2\,\text{mm}$ no centro do eletrodo para a passagem do spr
 Essa abertura promove uma alteração do campo elétrico próximo ao eixo axial em
 comparação ao caso de uma placa fechada. Em consequência, a tensão numérica
 obtida via FEM para alcançar o campo de instabilidade de
-$384{,}5\,\text{MV/m}$ pode diferir do valor de $3487{,}6\,\text{V}$ previsto
+$384{,}5\\,\text{MV/m}$ pode diferir do valor de $3487{,}6\\,\text{V}$ previsto
 pelo modelo analítico idealizado.
 
 \subsection{Mecanismo do Sistema Neutralizador}
@@ -396,6 +396,770 @@ filamentos termoiônicos ou emissores de cátodo oco, posicionado após o orifí
 de exaustão. Ele injeta elétrons em quantidade aproximadamente equivalente à
 corrente do jato coloidal, reduzindo o carregamento líquido da pluma e permitindo
 a operação contínua do sistema de propulsão.
+
+\section{Parte 2: Problema Dinâmico da Gotícula}
+
+\subsection{Propriedades Físicas da Gotícula}
+
+Para a análise dinâmica, considera-se uma gotícula esférica de formamida com
+raio
+
+\begin{equation}
+R_g = 0{,}002\,\text{mm}
+= 2 \times 10^{-6}\,\text{m}.
+\end{equation}
+
+A densidade da formamida é dada por
+
+\begin{equation}
+\rho = 1{,}13\,\text{g/cm}^3
+= 1130\,\text{kg/m}^3.
+\end{equation}
+
+Assumindo geometria esférica, o volume da gotícula é
+
+\begin{equation}
+V_g
+=
+\frac{4}{3}\pi R_g^3.
+\end{equation}
+
+Substituindo o valor do raio,
+
+\begin{equation}
+V_g
+=
+\frac{4}{3}\pi
+\left(2 \times 10^{-6}\right)^3
+\approx
+3{,}351 \times 10^{-17}\,\text{m}^3.
+\end{equation}
+
+A massa da gotícula pode então ser obtida pela relação
+
+\begin{equation}
+m = \rho V_g.
+\end{equation}
+
+Assim,
+
+\begin{equation}
+m
+=
+1130
+\left(
+3{,}351 \times 10^{-17}
+\right)
+\approx
+3{,}787 \times 10^{-14}\,\text{kg}.
+\end{equation}
+
+\subsection{Carga Elétrica da Gotícula}
+
+A carga elétrica da gotícula é determinada pela expressão fornecida no
+enunciado,
+
+\begin{equation}
+Q
+=
+8\pi
+\sqrt{
+\varepsilon_0 \gamma R_g^3
+}.
+\end{equation}
+
+Utilizando
+
+\begin{equation}
+\varepsilon_0
+=
+8{,}854187 \times 10^{-12}\,\text{F/m},
+\end{equation}
+
+\begin{equation}
+\gamma
+=
+0{,}05\,\text{N/m},
+\end{equation}
+
+e
+
+\begin{equation}
+R_g
+=
+2 \times 10^{-6}\,\text{m},
+\end{equation}
+
+obtém-se
+
+\begin{equation}
+Q
+=
+8\pi
+\sqrt{
+\left(8{,}854187 \times 10^{-12}\right)
+\left(0{,}05\right)
+\left(2 \times 10^{-6}\right)^3
+}.
+\end{equation}
+
+Como
+
+\begin{equation}
+\left(2 \times 10^{-6}\right)^3
+=
+8 \times 10^{-18},
+\end{equation}
+
+resulta
+
+\begin{equation}
+Q
+\approx
+4{,}73 \times 10^{-14}\,\text{C}.
+\end{equation}
+
+\subsection{Força Elétrica sobre a Gotícula}
+
+A dinâmica da gotícula é determinada pela força elétrica resultante do campo
+eletrostático obtido na primeira parte do problema. Para uma partícula com carga
+elétrica $Q$, a força elétrica é dada por
+
+\begin{equation}
+\mathbf{F}_e
+=
+Q\mathbf{E}.
+\end{equation}
+
+Como o movimento da gotícula é considerado apenas ao longo do eixo de simetria
+do propulsor, utiliza-se somente a componente axial do campo elétrico. Assim,
+
+\begin{equation}
+F_e(x)
+=
+Q E_x(x),
+\end{equation}
+
+onde $E_x(x)$ representa a componente do campo elétrico na direção do eixo de
+simetria, avaliada em $r=0$.
+
+O campo elétrico é obtido a partir do potencial elétrico calculado na solução
+do problema eletrostático,
+
+\begin{equation}
+\mathbf{E}
+=
+-\nabla \phi.
+\end{equation}
+
+Portanto, sobre o eixo de simetria,
+
+\begin{equation}
+E_x(x)
+=
+-
+\left.
+\frac{\partial \phi}{\partial x}
+\right|_{r=0}.
+\end{equation}
+
+Utilizando o valor previamente calculado para a carga da gotícula,
+
+\begin{equation}
+Q
+\approx
+4{,}73 \times 10^{-14}\,\text{C},
+\end{equation}
+
+a força elétrica pode ser escrita como
+
+\begin{equation}
+F_e(x)
+=
+\left(
+4{,}73 \times 10^{-14}
+\right)
+E_x(x).
+\end{equation}
+
+Dessa forma, a solução do problema eletrostático fornece $E_x(x)$, que permite
+determinar a distribuição da força elétrica $F_e(x)$ atuante sobre a gotícula ao
+longo de sua trajetória.
+
+\subsection{Equação do Movimento e Representação em Espaço de Estados}
+
+Assumindo que a gotícula se desloca apenas ao longo do eixo de simetria e que
+a única força atuante é a força elétrica, a dinâmica do movimento pode ser
+descrita pela segunda lei de Newton,
+
+\begin{equation}
+F_e(x)
+=
+m\ddot{x}.
+\end{equation}
+
+Como a força elétrica é dada por
+
+\begin{equation}
+F_e(x)
+=
+Q E_x(x),
+\end{equation}
+
+obtém-se
+
+\begin{equation}
+m\ddot{x}
+=
+Q E_x(x).
+\end{equation}
+
+Isolando a aceleração,
+
+\begin{equation}
+\ddot{x}
+=
+\frac{Q}{m}
+E_x(x).
+\end{equation}
+
+Utilizando os valores previamente calculados,
+
+\begin{equation}
+Q
+\approx
+4{,}73 \times 10^{-14}\,\text{C},
+\end{equation}
+
+e
+
+\begin{equation}
+m
+\approx
+3{,}787 \times 10^{-14}\,\text{kg},
+\end{equation}
+
+obtém-se
+
+\begin{equation}
+\frac{Q}{m}
+\approx
+1{,}249\,\text{C/kg}.
+\end{equation}
+
+Portanto, a equação do movimento pode ser escrita aproximadamente como
+
+\begin{equation}
+\ddot{x}
+=
+1{,}249\,E_x(x).
+\end{equation}
+
+Para a solução numérica, a equação diferencial de segunda ordem é reescrita em
+forma de espaço de estados. Definindo
+
+\begin{equation}
+x_1 = x,
+\end{equation}
+
+e
+
+\begin{equation}
+x_2 = \dot{x},
+\end{equation}
+
+tem-se
+
+\begin{equation}
+\dot{x}_1
+=
+x_2,
+\end{equation}
+
+e
+
+\begin{equation}
+\dot{x}_2
+=
+\frac{F_e(x_1)}{m}.
+\end{equation}
+
+Como
+
+\begin{equation}
+F_e(x_1)
+=
+Q E_x(x_1),
+\end{equation}
+
+o sistema final pode ser escrito como
+
+\begin{equation}
+\boxed{
+\begin{aligned}
+\dot{x}_1 &= x_2,\\
+\dot{x}_2 &= \frac{Q}{m}E_x(x_1).
+\end{aligned}
+}
+\end{equation}
+
+\subsection{Condições Iniciais}
+
+Para a integração da equação de movimento, considera-se que a gotícula inicia
+seu deslocamento na posição $x_0$, correspondente à posição inicial sobre o
+eixo de simetria, com velocidade inicial nula.
+
+Dessa forma,
+
+\begin{equation}
+x(0) = x_0,
+\end{equation}
+
+e
+
+\begin{equation}
+\dot{x}(0) = 0.
+\end{equation}
+
+Considerando as variáveis de estado anteriormente definidas,
+
+\begin{equation}
+x_1 = x,
+\qquad
+x_2 = \dot{x},
+\end{equation}
+
+as condições iniciais do sistema são
+
+\begin{equation}
+x_1(0) = x_0,
+\end{equation}
+
+e
+
+\begin{equation}
+x_2(0) = 0.
+\end{equation}
+
+Assim, o vetor de estado inicial pode ser representado por
+
+\begin{equation}
+\mathbf{x}(0)
+=
+\begin{bmatrix}
+x_0\\
+0
+\end{bmatrix}.
+\end{equation}
+
+A aceleração da gotícula não é tratada como uma variável de estado
+independente, sendo determinada a cada instante pela equação
+
+\begin{equation}
+\ddot{x}
+=
+\frac{Q}{m}E_x(x).
+\end{equation}
+
+\subsection{Integração Numérica pelo Método de Runge--Kutta}
+
+O sistema dinâmico pode ser escrito na forma vetorial
+
+\begin{equation}
+\dot{\mathbf{x}}
+=
+\mathbf{f}(\mathbf{x}),
+\end{equation}
+
+com
+
+\begin{equation}
+\mathbf{x}
+=
+\begin{bmatrix}
+x_1\\
+x_2
+\end{bmatrix},
+\end{equation}
+
+e
+
+\begin{equation}
+\mathbf{f}(\mathbf{x})
+=
+\begin{bmatrix}
+x_2\\[0.2cm]
+\dfrac{Q}{m}E_x(x_1)
+\end{bmatrix}.
+\end{equation}
+
+Para a integração temporal, utiliza-se o método de Runge--Kutta de quarta
+ordem (RK4). Considerando um passo de integração $h$, calculam-se
+
+\begin{equation}
+\mathbf{k}_1
+=
+\mathbf{f}(\mathbf{x}_n),
+\end{equation}
+
+\begin{equation}
+\mathbf{k}_2
+=
+\mathbf{f}
+\left(
+\mathbf{x}_n
++
+\frac{h}{2}\mathbf{k}_1
+\right),
+\end{equation}
+
+\begin{equation}
+\mathbf{k}_3
+=
+\mathbf{f}
+\left(
+\mathbf{x}_n
++
+\frac{h}{2}\mathbf{k}_2
+\right),
+\end{equation}
+
+e
+
+\begin{equation}
+\mathbf{k}_4
+=
+\mathbf{f}
+\left(
+\mathbf{x}_n
++
+h\mathbf{k}_3
+\right).
+\end{equation}
+
+O estado no passo seguinte é então obtido por
+
+\begin{equation}
+\boxed{
+\mathbf{x}_{n+1}
+=
+\mathbf{x}_n
++
+\frac{h}{6}
+\left(
+\mathbf{k}_1
++
+2\mathbf{k}_2
++
+2\mathbf{k}_3
++
+\mathbf{k}_4
+\right)
+}.
+\end{equation}
+
+Como o campo elétrico $E_x(x)$ é obtido numericamente a partir da solução
+eletrostática da Parte 1, seus valores são conhecidos em posições discretas ao
+longo do eixo de simetria. Dessa forma, durante a integração pelo método RK4,
+é necessário interpolar os valores de $E_x$ nas posições intermediárias
+avaliadas pelo método.
+
+\subsection{Interpolação do Campo Elétrico}
+
+A solução do problema eletrostático fornece valores discretos da componente
+axial do campo elétrico ao longo do eixo de simetria. Assim, considera-se um
+conjunto de pontos da forma
+
+\begin{equation}
+(x_i,E_i),
+\end{equation}
+
+onde
+
+\begin{equation}
+E_i = E_x(x_i).
+\end{equation}
+
+Como o método de integração pode avaliar a dinâmica em posições que não
+coincidem diretamente com os pontos obtidos na solução eletrostática, utiliza-se
+uma interpolação linear para determinar o valor do campo elétrico em posições
+intermediárias.
+
+Considerando dois pontos consecutivos $(x_i,E_i)$ e
+$(x_{i+1},E_{i+1})$, para uma posição
+
+\begin{equation}
+x_i \leq x \leq x_{i+1},
+\end{equation}
+
+o campo elétrico é aproximado por
+
+\begin{equation}
+E_x(x)
+=
+E_i
++
+\frac{E_{i+1}-E_i}
+{x_{i+1}-x_i}
+(x-x_i).
+\end{equation}
+
+A força elétrica atuante sobre a gotícula pode então ser calculada por
+
+\begin{equation}
+F_e(x)
+=
+Q E_x(x).
+\end{equation}
+
+Substituindo a expressão interpolada do campo,
+
+\begin{equation}
+F_e(x)
+=
+Q
+\left[
+E_i
++
+\frac{E_{i+1}-E_i}
+{x_{i+1}-x_i}
+(x-x_i)
+\right].
+\end{equation}
+
+Dessa forma, a força elétrica pode ser avaliada continuamente ao longo da
+trajetória da gotícula, mesmo que o campo eletrostático seja conhecido apenas
+em posições discretas.
+
+\subsection{Critério de Parada e Velocidade de Saída}
+
+A integração temporal da equação de movimento é realizada desde a posição
+inicial $x_0$ até o instante em que a gotícula alcança o plano do eletrodo.
+
+Como a distância entre o capilar e o eletrodo é
+
+\begin{equation}
+d
+=
+6\,\text{mm}
+=
+6 \times 10^{-3}\,\text{m},
+\end{equation}
+
+adota-se como critério de parada da integração
+
+\begin{equation}
+x \geq d.
+\end{equation}
+
+Se $t_f$ representa o instante em que a gotícula alcança o eletrodo, então
+
+\begin{equation}
+x(t_f)
+=
+d.
+\end{equation}
+
+A velocidade de saída da gotícula é definida como a velocidade correspondente
+a esse instante,
+
+\begin{equation}
+v_{\mathrm{saida}}
+=
+\dot{x}(t_f).
+\end{equation}
+
+Considerando a representação em espaço de estados,
+
+\begin{equation}
+x_1 = x,
+\qquad
+x_2 = \dot{x},
+\end{equation}
+
+a velocidade de saída pode ser escrita como
+
+\begin{equation}
+v_{\mathrm{saida}}
+=
+x_2(t_f),
+\end{equation}
+
+para
+
+\begin{equation}
+x_1(t_f)
+=
+d.
+\end{equation}
+
+Durante a integração, são armazenados os valores da posição, velocidade e
+força elétrica,
+
+\begin{equation}
+x_n,
+\qquad
+v_n = x_{2,n},
+\qquad
+F_{e,n}
+=
+Q E_x(x_n).
+\end{equation}
+
+Dessa forma, podem ser construídas as curvas
+
+\begin{equation}
+F_e(x)
+\end{equation}
+
+e
+
+\begin{equation}
+v(x),
+\end{equation}
+
+conforme solicitado no enunciado.
+
+\subsection{Relação entre Velocidade e Posição}
+
+Além da integração temporal pelo método de Runge--Kutta, a equação do movimento
+pode ser reescrita diretamente em função da posição, permitindo obter uma
+expressão para a velocidade ao longo da trajetória.
+
+Partindo da segunda lei de Newton,
+
+\begin{equation}
+m\ddot{x}
+=
+F_e(x),
+\end{equation}
+
+e utilizando
+
+\begin{equation}
+\ddot{x}
+=
+\frac{dv}{dt},
+\end{equation}
+
+pela regra da cadeia,
+
+\begin{equation}
+\frac{dv}{dt}
+=
+\frac{dv}{dx}
+\frac{dx}{dt}.
+\end{equation}
+
+Como
+
+\begin{equation}
+\frac{dx}{dt}
+=
+v,
+\end{equation}
+
+obtém-se
+
+\begin{equation}
+\ddot{x}
+=
+v\frac{dv}{dx}.
+\end{equation}
+
+Substituindo na equação do movimento,
+
+\begin{equation}
+m
+v
+\frac{dv}{dx}
+=
+F_e(x).
+\end{equation}
+
+Reorganizando,
+
+\begin{equation}
+v\,dv
+=
+\frac{F_e(x)}{m}\,dx.
+\end{equation}
+
+Integrando desde a posição inicial $x_0$, onde a velocidade inicial é nula,
+até uma posição genérica $x$,
+
+\begin{equation}
+\int_0^{v(x)}
+v\,dv
+=
+\frac{1}{m}
+\int_{x_0}^{x}
+F_e(\xi)\,d\xi.
+\end{equation}
+
+Portanto,
+
+\begin{equation}
+\frac{v^2(x)}{2}
+=
+\frac{1}{m}
+\int_{x_0}^{x}
+F_e(\xi)\,d\xi.
+\end{equation}
+
+Assim, a velocidade em função da posição pode ser escrita como
+
+\begin{equation}
+\boxed{
+v(x)
+=
+\sqrt{
+\frac{2}{m}
+\int_{x_0}^{x}
+F_e(\xi)\,d\xi
+}
+}.
+\end{equation}
+
+Como
+
+\begin{equation}
+F_e(x)
+=
+Q E_x(x),
+\end{equation}
+
+tem-se também
+
+\begin{equation}
+\boxed{
+v(x)
+=
+\sqrt{
+\frac{2Q}{m}
+\int_{x_0}^{x}
+E_x(\xi)\,d\xi
+}
+}.
+\end{equation}
+
+Essa expressão pode ser utilizada como verificação independente dos resultados
+obtidos pela integração temporal via método de Runge--Kutta.
+
+Para a posição final $x=d$, a velocidade de saída é dada por
+
+\begin{equation}
+\boxed{
+v_{\mathrm{saida}}
+=
+\sqrt{
+\frac{2}{m}
+\int_{x_0}^{d}
+F_e(x)\,dx
+}
+}.
+\end{equation}
+
 
 
 

@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1791150257 "TC04_1.tex" "build/TC04_1.pdf" "TC04_1" 1791150258
+["pdflatex"] 1791152742 "TC04_1.tex" "build/TC04_1.pdf" "TC04_1" 1791152742
   "/etc/texmf/web2c/texmf.cnf" 1777444779 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/gregzera/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1200.600pk" 1791150256 31928 ba08fed93242fdacda52320aef499abc ""
   "/home/gregzera/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600pk" 1791150256 40112 051bbc51f5d51794be73a515c93b146d ""
@@ -45,6 +45,7 @@
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb" 1248133631 37166 8ab3487cbe3ab49ebce74c29ea2418db ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1248133631 35469 70d41d2b9ea31d5d813066df7c99281c ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1248133631 32722 d7379af29a190c3f453aba36302ff5a9 ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb" 1248133631 32734 69e00a6b65cedb993666e42eedb3d48f ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1248133631 32726 0a1aea6fcd6468ee2cf64d891f5c43c8 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1248133631 32626 4f5c1b83753b1dd3a97d1b399a005b4b ""
@@ -116,9 +117,9 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1644012257 39432 7155514e09a3d69036fac785183a21c2 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1777516129 165012 f177baa1c39a3ebd62c3096a43521a0d ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1777520750 1436435 cfe67801375c2e871e4462cbfbcf9f3e ""
-  "TC04_1.tex" 1791150257 8991 e685233fbcb9d4428ae099c449c011fe ""
-  "build/TC04_1.aux" 1791150258 1661 2ac522aceb4301531119b51c32b35680 "pdflatex"
-  "build/TC04_1.out" 1791150258 1614 e5ec9ff00ba7342a9ad24557ab566063 "pdflatex"
+  "TC04_1.tex" 1791152741 20727 260662e3475a47b7aa90ed304a169913 ""
+  "build/TC04_1.aux" 1791152742 3105 b04da35ddc10a28b3723d6dcaaaef9f7 "pdflatex"
+  "build/TC04_1.out" 1791152742 4153 32283151d160b7a65378d7aaef852031 "pdflatex"
   (generated)
   "build/TC04_1.aux"
   "build/TC04_1.log"
